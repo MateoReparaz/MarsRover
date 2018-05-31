@@ -1,10 +1,22 @@
 // Rover Object Goes Here
 // ======================
-var rover = {
+var rover1 = {
+  name : "Roberto",
   direction: "N",
   position: [0,0],//x,y
-  travelLog:[]
+  travelLog: [],
+  nextTurn : "X"
 }
+
+var rover2 = {
+  name: "Roberta",
+  direction: "N",
+  position: [9,9],
+  travelLog: [],
+  nextTurn: "O"
+}
+var rover = [rover2, rover1];
+
 var travelLog = [];
 
 var obstacle1 = {
@@ -87,8 +99,12 @@ function moveForward(rover){
   if (rover.position[0] == 3 && rover.position[1] == 4){
     rover.position[0]-=1;
     console.log("Obstacle detected, choose a different path.");
-  } 
-  travelLog.push([rover.position[0],rover.position[1]]);
+  }
+  if (rover1.position[0] == rover2.position[0] && rover1.position[1] == rover2.position[1]){
+    rover.position[0]-=1;
+    console.log("Imminent collision detected! change direction");
+  }
+  travelLog.push(rover.name + ':'+[rover.position[0],rover.position[1]]);
   console.log("moveForward was called, New rover position is: ["+rover.position[0]+'x',rover.position[1]+'y'+"]");
 }
 
@@ -123,29 +139,45 @@ function moveBackwards(rover){
     console.log("Rover position readjusted, You have reached the world's edge, none but devils play past here");
   }
   if (rover.position[0] == 5 && rover.position[1] == 5){
-    rover.position[0]-=1;
+    rover.position[0]+=1;
     console.log("Obstacle detected, choose a different path.");
   }
   if (rover.position[0] == 3 && rover.position[1] == 4){
-    rover.position[0]-=1;
+    rover.position[0]+=1;
     console.log("Obstacle detected, choose a different path.");
+  }
+  if (rover1.position[0] == rover2.position[0] && rover1.position[1] == rover2.position[1]){
+    rover.position[0]+=1;
+    console.log("Imminent collision detected! change direction");
   }  
-  travelLog.push([rover.position[0],rover.position[1]]);
+  travelLog.push(rover.name + ':'+[rover.position[0],rover.position[1]]);
   console.log("moveBackwards was called, New rover position is: ["+rover.position[0]+'x',rover.position[1]+'y'+"]");
 }
-function commands(commands){
+
+var nextTurn = "X";
+function changeTurn(){
+  if(nextTurn == "X"){
+       nextTurn = "O";
+       console.log("Turn changed! Now is turn for rover2");
+  } else {
+       nextTurn = "X";
+       console.log("Turn changed! Now is turn for rover1");    
+  }
+}
+
+function commands(rover,commands){
 
   for (var i = 0; i< commands.length; i++){
-    if (commands[i]=== "f"){
+    if (commands[i]=== "f" && rover.nextTurn == nextTurn){
       moveForward(rover);
     }
-    else if (commands[i]=== "b"){
+    else if (commands[i]=== "b" && rover.nextTurn == nextTurn){
       moveBackwards(rover);  
     }
-    else if (commands[i]=== "r"){
+    else if (commands[i]=== "r" && rover.nextTurn == nextTurn){
       turnRight(rover);
     }
-    else if (commands[i]=== "l"){
+    else if (commands[i]=== "l" && rover.nextTurn == nextTurn){
       turnLeft(rover);
     }
     else {
@@ -154,5 +186,7 @@ function commands(commands){
   }
 }
 
-// Hola TA, para darle ordenes al rover hay que usar: 'commands("...");'
-// Para que te diga donde ha estado hay que llamar a la variabe 'travelLog'
+console.log("Rover1 has the first turn, use 'changeTurn();' to change it.");
+console.log("To move rovers 1 or 2 use: 'commands(rover1,'...')' or 'commands(rover2,'...'')'");
+console.log("To see the travel log use 'travelLog' function");
+
